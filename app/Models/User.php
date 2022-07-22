@@ -41,4 +41,15 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function role(){
+        return $this->belongsTo(Role::class, 'pkRole','pkRole')->withDefault([
+            'description' => 'Sin asignar'
+        ]);
+    }
+    public function subsidiary(){
+        return $this->belongsTo(Subsidiary::class, 'pkSubsidiary','pkSubsidiary')->withDefault([
+            'description' => 'Sin asignar',
+        ]);
+    }
 }
