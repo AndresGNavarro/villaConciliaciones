@@ -77,6 +77,13 @@ class MenusTableSeeder extends Seeder
             'parent' => $m2->pkMenu,
             'order' => 3,		
         ]);
+        Menu::create([
+            'name' => 'Menus',
+            'slug' => 'menu',
+            'icon' => '',
+            'parent' => $m2->pkMenu,
+            'order' => 4,		
+        ]);
     
     }
 }

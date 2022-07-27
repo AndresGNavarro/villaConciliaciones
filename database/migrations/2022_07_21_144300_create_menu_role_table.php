@@ -22,7 +22,6 @@ class CreateMenuRoleTable extends Migration
             $table->unsignedBigInteger('pkRole')->unsigned();
             $table->foreign('pkRole')->references('pkRole')->on('roles');
 
-            $table->timestamps();
         });
     }
 
