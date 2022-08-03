@@ -50,8 +50,9 @@ class RoleController extends Controller
             'description' => 'required|max:255|unique:roles,description',
         ]);
         
-        DB::beginTransaction();
+        
         try {
+            DB::beginTransaction();
             $objRole = new Role();
             $objRole->description = $request->description;
             $objRole->save();
@@ -110,8 +111,9 @@ class RoleController extends Controller
             'description' => 'required|max:255|unique:roles,description,' . $pkRole . ',pkRole',
         ]);
 
-        DB::beginTransaction();
+        
         try {
+            DB::beginTransaction();
             $updatedRole = $role->description;
             $role->description = $request->input('description');
             $role->save(); //UPDATE
@@ -140,8 +142,9 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         $deletedRole = $role->description;
-        DB::beginTransaction();
+        
         try {
+            DB::beginTransaction();
             $role->menus()->detach();
             $role->delete();
             DB::commit();

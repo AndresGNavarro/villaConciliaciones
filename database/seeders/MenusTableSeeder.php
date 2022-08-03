@@ -51,7 +51,7 @@ class MenusTableSeeder extends Seeder
         ]);
         Menu::create([
             'name' => 'IATAS',
-            'slug' => 'home',
+            'slug' => 'iatas',
             'icon' => '',
             'parent' => $m2->pkMenu,
             'order' => 0,		

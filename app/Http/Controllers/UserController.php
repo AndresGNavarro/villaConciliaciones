@@ -53,8 +53,9 @@ class UserController extends Controller
             'sucursal' => 'required',
         ]);
 
-        DB::beginTransaction();
+        
         try {
+            DB::beginTransaction();
             $PasswordDefault = Str::random(6);
             $HashDefault  = Hash::make($PasswordDefault);
 

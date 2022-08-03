@@ -97,3 +97,12 @@ Route::get('/menu/{menu}/edit', [App\Http\Controllers\MenuController::class, 'ed
 Route::put('/menu/edit/{menu}', [App\Http\Controllers\MenuController::class, 'update']);//Enviar formulario edición
 
 Route::delete('/menu/{menu}', [App\Http\Controllers\MenuController::class, 'destroy']);//Enviar formulario edición
+
+//ROUTES IATAS
+Route::get('/iata', [App\Http\Controllers\DocumentController::class, 'indexIata'])->name('iata.index');//Vista de asignación de IATAS a periodos
+
+Route::post('/iata/validatePeriod', [App\Http\Controllers\DocumentController::class, 'validatePeriodIata'])->name('iata.validate.period');//Enviar formulario registro
+Route::post('/iata/storePeriod', [App\Http\Controllers\DocumentController::class, 'storePeriodIata'])->name('iata.store.period');//Enviar formulario registro
+
+Route::get('/iata/documents/{url}/downloadFromPeriod', [App\Http\Controllers\DocumentController::class, 'downloadIataFromPeriod']);//Ver formulario edición
+

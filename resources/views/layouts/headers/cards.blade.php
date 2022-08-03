@@ -6,18 +6,28 @@
                 <div class="col-xl-3 col-lg-6">
                     <div class="card card-stats mb-4 mb-xl-0">
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col">
-                                    <h5 class="card-title text-uppercase text-muted mb-0">Traffic</h5>
-                                    <span class="h2 font-weight-bold mb-0">350,897</span>
+                            <div class="row align-items-center">
+                                <div class="col-auto">
+                                    <a href="#" class="avatar avatar-xl rounded-circle">
+                                        <img alt="Image placeholder"
+                                            src="https://argon-dashboard-pro-laravel.creative-tim.com/argon/img/theme/team-2.jpg">
+                                    </a>
+                                </div>
+                                <div class="col ml--2">
+                                    <h4 class="mb-0">
+                                        <a href="#!">John Snow</a>
+                                    </h4>
+                                    <p class="text-sm text-muted mb-0">Working remoteley</p>
+                                    <span class="text-success">●</span>
+                                    <small>Active</small>
                                 </div>
                                 <div class="col-auto">
-                                    <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
-                                        <i class="fas fa-chart-bar"></i>
-                                    </div>
+                                    <button type="button" class="btn btn-sm btn-primary">Add</button>
                                 </div>
                             </div>
-                            <p class="mt-3 mb-0 text-muted text-sm">
+                        </div>
+                        <div class="card-footer">
+                            <p class="mt-0 mb-0 text-muted text-sm">
                                 <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
                                 <span class="text-nowrap">Since last month</span>
                             </p>
