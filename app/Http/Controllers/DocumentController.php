@@ -33,8 +33,8 @@ class DocumentController extends Controller
         ->orWhere('pkDocumentType', null)
         ->select([
             'documents.pkDocument',
-            'documents.name',
-            'documents.url',
+            'documents.originalName',
+            'documents.diskName',
             'documents.iata',
             'documents.id',
             'documents.pkDocumentType',
@@ -53,6 +53,7 @@ class DocumentController extends Controller
      */
     public function validatePeriodIata(Request $request)
     {
+        
         $data = array();
 
         $validator = Validator::make($request->all(), [
@@ -71,12 +72,9 @@ class DocumentController extends Controller
                 $dataContentUpdateIata = "";
                 $file = $request->file('file');
                 $filename = $file->getClientOriginalName();
-
-                // File upload location
-                $location = 'documents';
-
+                
                 // Upload file
-                $path = Storage::put($location, $file);
+                $path = Storage::disk('documents')->put('/', $file);
 
                 $dataImport = Excel::toArray(new DocumentIataImport, $file);
 
@@ -100,8 +98,8 @@ class DocumentController extends Controller
                     ->where('periods.reference', $referencePeriod)
                     ->select([
                         'documents.pkDocument',
-                        'documents.name',
-                        'documents.url',
+                        'documents.originalName',
+                        'documents.diskName',
                         'document_types.pkDocumentType',
                         'document_types.description',
                         'periods.description',
@@ -113,8 +111,8 @@ class DocumentController extends Controller
                     //Va a reemplazar un documento IATA relacionado al periodo
                     $dataContentUpdateIata .=
                         "<tr>
-                    <input type='hidden' name='name[]'  value='{$filename}' class='inputForm'>
-                    <input type='hidden' name='url[]'  value='{$path}'>
+                    <input type='hidden' name='originalName[]'  value='{$filename}' class='inputForm'>
+                    <input type='hidden' name='diskName[]'  value='{$path}'>
                     <input type='hidden' name='iata[]'  value='{$referenceIata}'>
                     <input type='hidden' name='referencePeriod[]'  value='{$referencePeriod}'>
 
@@ -132,8 +130,8 @@ class DocumentController extends Controller
                     //Se crea una nueva relación entre documento IATA y periodo
                     $dataContentNewIata .=
                         "<tr>
-                    <input type='hidden' name='name[]'  value='{$filename}' class='inputForm'>
-                    <input type='hidden' name='url[]'  value='{$path}'>
+                    <input type='hidden' name='originalName[]'  value='{$filename}' class='inputForm'>
+                    <input type='hidden' name='diskName[]'  value='{$path}'>
                     <input type='hidden' name='iata[]'  value='{$referenceIata}'>
                     <input type='hidden' name='referencePeriod[]'  value='{$referencePeriod}'>
 
@@ -170,14 +168,14 @@ class DocumentController extends Controller
         /* dd($request); */
 
         $validated = $request->validate([
-            'name' => 'required',
-            'url' => 'required',
+            'originalName' => 'required',
+            'diskName' => 'required',
             'iata' => 'required',
             'referencePeriod' => 'required',
         ]);
 
-        $arrayDocumentName = $request->name;
-        $arrayDocumentUrl = $request->url;
+        $arrayDocumentName = $request->originalName;
+        $arrayDocumentUrl = $request->diskName;
         $arrayDocumentIata = $request->iata;
         $arrayDocumentReferencePeriod = $request->referencePeriod;
 
@@ -191,8 +189,8 @@ class DocumentController extends Controller
                     ->where('periods.reference', $referencePeriod)
                     ->select([
                         'documents.pkDocument',
-                        'documents.name',
-                        'documents.url',
+                        'documents.originalName',
+                        'documents.diskName',
                         'documents.iata',
                         'documents.id',
                         'documents.pkPeriod',
@@ -206,8 +204,8 @@ class DocumentController extends Controller
                 if ($objDocumentIataAsignedToPeriod) {
 
                     $objDocument = Document::findOrFail($objDocumentIataAsignedToPeriod[0]['pkDocument']);
-                    $objDocument->name = $arrayDocumentName[$key];
-                    $objDocument->url = $arrayDocumentUrl[$key];
+                    $objDocument->originalName = $arrayDocumentName[$key];
+                    $objDocument->diskName = $arrayDocumentUrl[$key];
                     $objDocument->id = auth()->id();
                     $objDocument->save();
 
@@ -216,8 +214,8 @@ class DocumentController extends Controller
                     $pkPeriod = Period::where('reference',$referencePeriod)->pluck('pkPeriod')->all();
                     
                     $objDocument = new Document();
-                    $objDocument->name = $arrayDocumentName[$key];
-                    $objDocument->url = $arrayDocumentUrl[$key];
+                    $objDocument->originalName = $arrayDocumentName[$key];
+                    $objDocument->diskName = $arrayDocumentUrl[$key];
                     $objDocument->iata = $arrayDocumentIata[$key];
                     $objDocument->id = auth()->id();
                     $objDocument->pkDocumentType = 1;
@@ -235,13 +233,13 @@ class DocumentController extends Controller
     }
 
     function downloadIataFromPeriod($url){
-
+        
         try {
-        $documentName = Document::where('url', 'documents/'.$url)->pluck('name')->all();
+        $documentName = Document::where('diskName', $url)->pluck('originalName')->all();
         $pathToFile = storage_path("app/documents/".$url);
         return response()->download($pathToFile,$documentName[0]);
         } catch (exception $e) {
-            return redirect()->route('iata.index')->with('notificationDanger', 'Ha ocurrido un error durante el proceso, notificar al Administrador!');
+            return redirect()->route('iata.index')->with('notificationDanger', 'Ha ocurrido un error durante el proceso, notificar al Administrador!'.$e);
         }
         
         

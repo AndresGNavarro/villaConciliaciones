@@ -33,11 +33,9 @@
         @endif
         <div class="card shadow">
             <div class="card-header border-0">
-                <div class="row align-items-center">
-                    <div class="col">
+                <div class="row align-items-end">
                         <i class="fas fa-file-excel fa-2x"></i>
-                        <h3 class="mb-0">Asignación masiva IATAS a periodos</h3>
-                    </div>
+                        <h3 class="mb-0 ml-2">Asignación masiva IATAS a periodos</h3>
                 </div>
                 <hr>
             </div>
@@ -87,13 +85,13 @@
                                 <td scope="row" style="white-space:nowrap">
                                     {{ $row->description }}
                                 </td>
-                                @if ($row->url == null)
+                                @if ($row->diskName == null)
                                     <td scope="row" style="white-space:nowrap">
                                         No existe documento relacionado
                                     </td>
                                 @else
                                     <td class="text-center">
-                                        <a href="{{ url('/iata/' . $row->url . '/downloadFromPeriod') }}"
+                                        <a href="{{ url('/iata/' . $row->diskName . '/downloadFromPeriod') }}"
                                             class="btn btn-primary btn-icon-only">
                                             <span class="btn-inner--icon"><i class="ni ni-folder-17"></i></span>
                                         </a>
@@ -183,10 +181,7 @@
             maxFilesize: 2,
             dictDefaultMessage: "Agregue sus IATAS para asignarlas a un período",
             success: function(file, response) {
-
-
-                $(".dz-image img").attr("src",
-                    "/assets/vendor/@fortawesome/fontawesome-free/svgs/regular/file-alt.svg");
+                
                 if (response.dataContentNewIata != "") {
 
                     $("#table-periodos").css("display", "none");

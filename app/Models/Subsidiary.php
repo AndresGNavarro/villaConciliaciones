@@ -15,4 +15,8 @@ class Subsidiary extends Model
     public function users(){
         return $this->hasMany(User::class, 'pkSubsidiary','pkSubsidiary');
     }
+
+    public function subsidiaryUser(){
+        return $this->belongsToMany(User::class, 'user_subsidiary', 'pkSubsidiary', 'id');
+    }
 }

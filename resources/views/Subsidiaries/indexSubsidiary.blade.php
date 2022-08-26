@@ -48,6 +48,7 @@
                                 <tr>
                                     <th scope="col">Id</th>
                                     <th scope="col">Sucursal</th>
+                                    <th scope="col">Iata ID</th>
                                     <th scope="col">Fecha creación</th>
                                     <th class="text-center" scope="col" >Opciones</th>
                                 </tr>
@@ -60,6 +61,9 @@
                                     </td>
                                     <td scope="row" style="white-space:nowrap">
                                     {{$row->description}}
+                                    </td>
+                                    <td scope="row" style="white-space:nowrap">
+                                    {{$row->iata}}
                                     </td>
                                     <td scope="row" style="white-space:nowrap">
                                     {{$row->created_at}}

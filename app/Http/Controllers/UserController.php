@@ -51,6 +51,7 @@ class UserController extends Controller
             'email' => 'required|max:255|email|unique:users,email',
             'role' => 'required',
             'sucursal' => 'required',
+            'sucursalAdministra' => 'required',
         ]);
 
         
@@ -66,6 +67,12 @@ class UserController extends Controller
             $objUser->pkSubsidiary = $request->sucursal;
             $objUser->password = $HashDefault;
             $objUser->save();
+
+            if ($request->sucursalAdministra) {
+
+                $array = $request->sucursalAdministra;
+                $objUser->userSubsidiary()->attach($array);
+            }
 
             /* Aqui enviamos los parametros al mail a través de MailUserRegistered */
             DB::afterCommit(function () use ($objUser, $PasswordDefault) {
@@ -86,7 +93,16 @@ class UserController extends Controller
     {
         $objRole = Role::All();
         $objSubsidiary = Subsidiary::All();
-        return view('users.formEditUser', compact('user', 'objRole', 'objSubsidiary'));
+        $objUserSubsidiary = User::join('user_subsidiary', 'users.id', 'user_subsidiary.id')
+        ->where('user_subsidiary.id', '=', $user->id)
+        ->select(['user_subsidiary.pkSubsidiary'])
+        ->get()
+        ->toArray();
+        $arrayUserSubsidiary = [];
+        foreach ($objUserSubsidiary as $option) {
+            array_push($arrayUserSubsidiary,$option['pkSubsidiary']);
+        }
+        return view('users.formEditUser', compact('user', 'objRole', 'objSubsidiary','arrayUserSubsidiary'));
     }
 
     public function update(Request $request, User $user)
@@ -98,16 +114,27 @@ class UserController extends Controller
             'email' => 'required|max:255|email|unique:users,email,' . $pkUser . ',id',
             'role' => 'required',
             'sucursal' => 'required',
+            'sucursalAdministra' => 'required',
         ]);
 
         try {
+            DB::beginTransaction();
             $updatedUser = $user->name;
             $user->name = $request->input('name');
             $user->email = $request->input('email');
             $user->pkRole = $request->input('role');
             $user->pkSubsidiary = $request->input('sucursal');
             $user->save(); //UPDATE
+
+            $user->userSubsidiary()->detach();
+            if ($request->sucursalAdministra) {
+
+                $array = $request->sucursalAdministra;
+                $user->userSubsidiary()->attach($array);
+            }
+            DB::commit();
         } catch (\Throwable $th) {
+            DB::rollBack();
             return redirect()->route('user.index')->with('notificationDanger', 'Ha ocurrido un error al intentar actualizar el registro, notificar al Administrador!');
         }
 
@@ -120,8 +147,13 @@ class UserController extends Controller
         /* dd($user); */
         $deletedUser = $user->name;
         try {
+            DB::beginTransaction();
+            $user->userSubsidiary()->detach();
             $user->delete();
+            
+            DB::commit();
         } catch (exception $e) {
+            DB::rollback();
             return redirect()->route('user.index')->with('notificationDanger', 'Ha ocurrido un error al intentar eliminar el registro ' . $deletedUser . '!');
         }
         return redirect()->route('user.index')->with('notification', 'El registro ' . $deletedUser . ' se ha eliminado correctamente');

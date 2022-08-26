@@ -33,7 +33,7 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::put('profile/password', ['as' => 'profile.password', 'uses' => 'App\Http\Controllers\ProfileController@password']);
 });
 
-//RUTA PARA TESTEAR CORREOS
+//RUTA PARA TESTEAR VISTAS DE CORREOS
 Route::get('testmail', function () {
 	return view('mails.viewMailUserRegistered', ['name'=>'Administrador','email'=>'correo@villatours.com','password'=>'123456']);
 });
@@ -55,9 +55,9 @@ Route::get('/conciliation', [App\Http\Controllers\ConciliationController::class,
 Route::post('/conciliation', [App\Http\Controllers\ConciliationController::class, 'index']);//Ver listado recibiendo parámetros
 
 Route::get('/conciliation/create', [App\Http\Controllers\ConciliationController::class, 'create'])->name('conciliation.create');//Ver formulario registro
-Route::post('/conciliation/create', [App\Http\Controllers\ConciliationController::class, 'store'])->name('conciliation.store');//Enviar formulario registro
+Route::post('/conciliation/analysis', [App\Http\Controllers\ConciliationController::class, 'store'])->name('conciliation.analysis');//Enviar formulario registro
 
-Route::get('/conciliation/{conciliation}/edit', [App\Http\Controllers\ConciliationController::class, 'edit']);//Ver formulario edición
+Route::get('/conciliation/{conciliation}/show', [App\Http\Controllers\ConciliationController::class, 'show']);//Ver formulario edición
 Route::put('/conciliation/edit/{conciliation}', [App\Http\Controllers\ConciliationController::class, 'update']);//Enviar formulario edición
 
 Route::delete('/conciliation/{conciliation}', [App\Http\Controllers\ConciliationController::class, 'destroy']);//Enviar formulario edición
@@ -104,5 +104,5 @@ Route::get('/iata', [App\Http\Controllers\DocumentController::class, 'indexIata'
 Route::post('/iata/validatePeriod', [App\Http\Controllers\DocumentController::class, 'validatePeriodIata'])->name('iata.validate.period');//Enviar formulario registro
 Route::post('/iata/storePeriod', [App\Http\Controllers\DocumentController::class, 'storePeriodIata'])->name('iata.store.period');//Enviar formulario registro
 
-Route::get('/iata/documents/{url}/downloadFromPeriod', [App\Http\Controllers\DocumentController::class, 'downloadIataFromPeriod']);//Ver formulario edición
+Route::get('/iata/{url}/downloadFromPeriod', [App\Http\Controllers\DocumentController::class, 'downloadIataFromPeriod']);//Ver formulario edición
 

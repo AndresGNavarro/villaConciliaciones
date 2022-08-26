@@ -52,4 +52,9 @@ class User extends Authenticatable
             'description' => 'Sin asignar',
         ]);
     }
+
+    public function userSubsidiary()
+    {
+        return $this->belongsToMany(Subsidiary::class, 'user_subsidiary', 'id', 'pkSubsidiary');
+    }
 }

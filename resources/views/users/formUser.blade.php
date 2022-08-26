@@ -44,7 +44,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-xs-12 col-sm-4 col-md-6">
+                                <div class="form-group col-xs-12 col-sm-4 col-md-4">
                                     <label for="role">Rol:</label>
                                     <select name="role" id="role" class="form-control select2  @error('role') is-invalid @enderror" required>
                                     <option value=""> Selecciona una opción: </option>
@@ -57,8 +57,8 @@
                                     @enderror
                                 </div>
     
-                                <div class="form-group col-xs-12 col-sm-4 col-md-6">
-                                    <label for="sucursal">Sucursal:</label>
+                                <div class="form-group col-xs-12 col-sm-4 col-md-4">
+                                    <label for="sucursal"> <b> Sucursal Origen:</b> </label>
                                     <select name="sucursal" id="sucursal" class="form-control select2  @error('sucursal') is-invalid @enderror" required>
                                     <option value=""> Selecciona una opción: </option>
                                     @foreach ($objSubsidiary as $subsidiary)
@@ -66,6 +66,17 @@
                                     @endforeach
                                     </select>
                                     @error('sucursal')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                <div class="form-group col-xs-12 col-sm-4 col-md-4">
+                                    <label for="sucursalAdministra"> Sucursales a cargo:</label>
+                                    <select name="sucursalAdministra[]" id="sucursalAdministra" multiple="multiple" class="form-control  @error('sucursalAdministra') is-invalid @enderror" required>
+                                    @foreach ($objSubsidiary as $subsidiary)
+                                    <option {{ ( in_array($subsidiary->pkSubsidiary, old('sucursalAdministra')?: [])) ?'selected':'' }} value="{{$subsidiary->pkSubsidiary}}"> {{$subsidiary->description}} </option>
+                                    @endforeach
+                                    </select>
+                                    @error('sucursalAdministra')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -90,6 +101,10 @@
     <script>
         $(document).ready(function() {
             $('.select2').select2({
+                theme: 'bootstrap4',
+            });
+
+            $('#sucursalAdministra').select2({
                 theme: 'bootstrap4',
             });
         });

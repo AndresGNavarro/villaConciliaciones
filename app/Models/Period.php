@@ -11,6 +11,7 @@ class Period extends Model
 
     protected $table = "periods";
     protected $primaryKey = 'pkPeriod';
+    public $timestamps = false;
 
     public function conciliations(){
         return $this->hasMany(Conciliation::class, 'pkPeriod','pkPeriod');

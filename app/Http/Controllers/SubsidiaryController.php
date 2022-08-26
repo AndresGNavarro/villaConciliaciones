@@ -44,10 +44,12 @@ class SubsidiaryController extends Controller
    {
        $validated = $request->validate([
            'description' => 'required|max:255|unique:subsidiaries,description',
+           'iata' => 'required|max:255|unique:subsidiaries,iata',
        ]);
 
        $objSubsidiary = new Subsidiary();
        $objSubsidiary->description = $request->description;
+       $objSubsidiary->iata = $request->iata;
        $objSubsidiary->save();
 
        return redirect()->route('subsidiary.index')->with('notification', 'Registro exitoso!');
@@ -88,10 +90,12 @@ class SubsidiaryController extends Controller
        $pkSubsidiary = $subsidiary->pkSubsidiary;
        $validated = $request->validate([
            'description' => 'required|max:255|unique:subsidiaries,description,'.$pkSubsidiary.',pkSubsidiary',
+           'iata' => 'required|max:255|unique:subsidiaries,iata,'.$pkSubsidiary.',pkSubsidiary',
        ]);
        
        $updatedSubsidiary = $subsidiary->description;
        $subsidiary->description = $request->input('description');
+       $subsidiary->iata = $request->input('iata');
        $subsidiary->save(); //UPDATE
 
        return redirect()->route('subsidiary.index')->with('notification', 'El registro '.$updatedSubsidiary.' ha sido actualizado correctamente');
