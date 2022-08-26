@@ -16,6 +16,7 @@ class CreateSubsidiariesTable extends Migration
         Schema::create('subsidiaries', function (Blueprint $table) {
             $table->id('pkSubsidiary');
             $table->string('description');
+            $table->string('iata')->nullable();
             $table->timestamps();
         });
     }

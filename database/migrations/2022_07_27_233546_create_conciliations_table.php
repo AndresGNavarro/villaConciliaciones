@@ -22,9 +22,9 @@ class CreateConciliationsTable extends Migration
             $table->unsignedBigInteger('pkPeriod')->unsigned();
             $table->foreign('pkPeriod')->references('pkPeriod')->on('periods');
 
-            $table->double('valueInvoiceBsp', 8, 2);
-            $table->double('valuePreviousReport', 8, 2);
-            $table->double('valueDiferences', 8, 2);
+            $table->double('valueInvoiceBsp', 18, 2);
+            $table->double('valuePreviousReport', 18, 2);
+            $table->double('valueDiferences', 18, 2);
             $table->string('status'); //Pending, confirmed, canceled
             $table->timestamps();
         });

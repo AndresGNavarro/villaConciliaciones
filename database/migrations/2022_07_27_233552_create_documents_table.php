@@ -14,10 +14,10 @@ class CreateDocumentsTable extends Migration
     public function up()
     {
         Schema::create('documents', function (Blueprint $table) {
-            $table->id('pkDocuments');
+            $table->id('pkDocument');
 
-            $table->string('name'); 
-            $table->string('url');
+            $table->string('originalName'); 
+            $table->string('diskName');
             $table->string('iata')->nullable();
 
             $table->unsignedBigInteger('id')->unsigned();

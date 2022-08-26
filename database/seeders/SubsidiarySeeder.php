@@ -15,10 +15,20 @@ class SubsidiarySeeder extends Seeder
     public function run()
     {
         DB::table('subsidiaries')->insert([
-            'description' => 'MÉXICO'
+            'description' => 'MÉXICO',
+            'iata' => '86515984'
         ]);
         DB::table('subsidiaries')->insert([
-            'description' => 'GUADALAJARA'
+            'description' => 'GUADALAJARA',
+            'iata' => '86502194'
+        ]);
+        DB::table('subsidiaries')->insert([
+            'description' => 'RAYON',
+            'iata' => '86511574'
+        ]);
+        DB::table('subsidiaries')->insert([
+            'description' => 'CONDUCTORES',
+            'iata' => '86515973'
         ]);
     }
 }

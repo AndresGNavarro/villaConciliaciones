@@ -36,22 +36,22 @@ class MenusTableSeeder extends Seeder
             'order' => 2,			
         ]);
         Menu::create([
-            'name' => 'Nuevo Análisis',
-            'slug' => 'home',
+            'name' => 'Nueva Conciliación',
+            'slug' => '/conciliation/create',
             'icon' => '',
             'parent' => $m1->pkMenu,
             'order' => 0,			
         ]);
         Menu::create([
-            'name' => 'Historial',
-            'slug' => 'home',
+            'name' => 'Historial Conciliaciones',
+            'slug' => '/conciliation',
             'icon' => '',
             'parent' => $m1->pkMenu,
             'order' => 1,			
         ]);
         Menu::create([
             'name' => 'IATAS',
-            'slug' => 'iatas',
+            'slug' => 'iata',
             'icon' => '',
             'parent' => $m2->pkMenu,
             'order' => 0,		
