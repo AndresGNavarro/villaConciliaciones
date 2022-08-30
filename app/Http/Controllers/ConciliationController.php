@@ -10,6 +10,7 @@ use App\Models\Period;
 use App\Models\Document;
 use App\Models\User;
 use App\Exports\ConciliationExport;
+use App\Exports\ResumenConciliationExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -167,6 +168,8 @@ class ConciliationController extends Controller
                 $totalBoletosDomesticoRFND = 0;
                 $totalBoletosDomesticoADMA = 0;
                 $totalBoletosDomesticoACMA = 0;
+                //ARRAY WITH TKTT, EMDA Y EMDS
+                $arrayAllTicketsBsp = [];
 
                 for ($i = $inicioBoletajeInternacional; $i < $inicioBoletajeDomestico; $i++) {
                     //IDENTIFY TICKET TYPE
@@ -189,6 +192,8 @@ class ConciliationController extends Controller
 
                         //PROCESS VALIDATION
                         $resultadosInternacional = $this->analysisTktt($dataArrayIata[$i], $resultadosInternacional, $dataArrayPrevio);
+                        //PROCESS GET ARRAY ALL TICKETS
+                        $arrayAllTicketsBsp = $this->getAllTicketsBsp($dataArrayIata[$i],$arrayAllTicketsBsp, $type = 'I');
                     } elseif ($dataArrayIata[$i][1] == 'CANX') {
                         $totalBoletosInternacional++;
                         $totalBoletosInternacionalCANX++;
@@ -216,6 +221,7 @@ class ConciliationController extends Controller
 
                         //PROCESS VALIDATION
                         $resultadosInternacional = $this->analysisRfnd($dataArrayIata[$i], $resultadosInternacional, $dataArrayPrevio);
+                        $arrayAllTicketsBsp = $this->getAllTicketsBsp($dataArrayIata[$i],$arrayAllTicketsBsp, $type = 'I');
                     } elseif ($dataArrayIata[$i][1] == 'ADMA') {
                         $totalBoletosInternacional++;
                         $totalBoletosInternacionalADMA++;
@@ -226,6 +232,7 @@ class ConciliationController extends Controller
 
                         //PROCESS VALIDATION
                         $resultadosInternacional = $this->analysisAdma($dataArrayIata[$i], $resultadosInternacional, $dataArrayPrevio);
+                        $arrayAllTicketsBsp = $this->getAllTicketsBsp($dataArrayIata[$i],$arrayAllTicketsBsp, $type = 'I');
                     } elseif ($dataArrayIata[$i][1] == 'ACMA') {
                         $totalBoletosInternacional++;
                         $totalBoletosInternacionalACMA++;
@@ -236,6 +243,8 @@ class ConciliationController extends Controller
 
                         //PROCESS VALIDATION
                         $resultadosInternacional = $this->analysisAcma($dataArrayIata[$i], $resultadosInternacional, $dataArrayPrevio);
+                        $arrayAllTicketsBsp = $this->getAllTicketsBsp($dataArrayIata[$i],$arrayAllTicketsBsp, $type = 'I');
+                       
                     } elseif ($dataArrayIata[$i][1] == 'SPDR') {
                         $totalBoletosInternacional++;
                         $totalBoletosInternacionalSPDR++;
@@ -269,6 +278,7 @@ class ConciliationController extends Controller
                         $totalBoletosDomestico++;
 
                         $resultadosDomestico = $this->analysisTktt($dataArrayIata[$i], $resultadosDomestico, $dataArrayPrevio);
+                        $arrayAllTicketsBsp = $this->getAllTicketsBsp($dataArrayIata[$i], $arrayAllTicketsBsp,$type = 'D');
                     } elseif ($dataArrayIata[$i][1] == 'CANX') {
                         $totalBoletosDomestico++;
                         $totalBoletosDomesticoCANX++;
@@ -296,6 +306,7 @@ class ConciliationController extends Controller
 
                         //PROCESS VALIDATION
                         $resultadosDomestico = $this->analysisRfnd($dataArrayIata[$i], $resultadosDomestico, $dataArrayPrevio);
+                        $arrayAllTicketsBsp = $this->getAllTicketsBsp($dataArrayIata[$i], $arrayAllTicketsBsp,$type = 'D');
                     } elseif ($dataArrayIata[$i][1] == 'ADMA') {
                         $totalBoletosDomestico++;
                         $totalBoletosDomesticoADMA++;
@@ -306,6 +317,7 @@ class ConciliationController extends Controller
 
                         //PROCESS VALIDATION
                         $resultadosDomestico = $this->analysisAdma($dataArrayIata[$i], $resultadosDomestico, $dataArrayPrevio);
+                        $arrayAllTicketsBsp = $this->getAllTicketsBsp($dataArrayIata[$i], $arrayAllTicketsBsp,$type = 'D');
                     } elseif ($dataArrayIata[$i][1] == 'ACMA') {
                         $totalBoletosDomestico++;
                         $totalBoletosDomesticoACMA++;
@@ -316,6 +328,7 @@ class ConciliationController extends Controller
 
                         //PROCESS VALIDATION
                         $resultadosDomestico = $this->analysisAcma($dataArrayIata[$i], $resultadosDomestico, $dataArrayPrevio);
+                        $arrayAllTicketsBsp = $this->getAllTicketsBsp($dataArrayIata[$i], $arrayAllTicketsBsp,$type = 'D');
                     }
                 }
 
@@ -352,6 +365,7 @@ class ConciliationController extends Controller
 
                 }
 
+                //Conteo de totales
                 $valorIataDomestico = 0;
                 foreach ($resultadosDomestico as $value) {
                     $valorIataDomestico += $value['Total'];
@@ -377,15 +391,15 @@ class ConciliationController extends Controller
                 $objConciliation->save();
 
                 $lastPkInsertedConciliation = $objConciliation->pkConciliation;
-
+                /* dd($arrayAllTicketsBsp); */
                 $newArrayResultTickets = array_merge($resultadosReportePrevioFueraPeriodo,$resultadosDomestico, $resultadosInternacional);
                 array_multisort(array_column($newArrayResultTickets, 'Boleto'), SORT_ASC, $newArrayResultTickets);
 
                 $uuid = Str::uuid()->toString();
                 //Devuelve True or false
-                /* dd($newArrayResultTickets); */
                 $pathPrevio = Excel::store(new ConciliationExport([$newArrayResultTickets, $valorDiferencias, $valorReportePrevio, $grandTotal]), 'Conciliacion_'.$uuid.'.xlsx', 'documents');
-
+                $pathResumen = Excel::store(new ResumenConciliationExport([$arrayAllTicketsBsp, $grandTotal, $arrayHeadingInfoIata['referencePeriod'], $arrayHeadingInfoIata['referenceIata']]), 'Resumen_'.$uuid.'.xlsx', 'documents');
+                
                 // Upload files
                 $pathStoragePrevio = Storage::disk('documents')->put('/', $filePrevio[0]);
                 $pathStorageIata = Storage::disk('documents')->put('/', $fileIata[0]);
@@ -410,15 +424,25 @@ class ConciliationController extends Controller
                 $objDocumentPrevio->pkConciliation = $lastPkInsertedConciliation;
                 $objDocumentPrevio->save();
 
-                $objDocumentaAnalisis = new Document();
-                $objDocumentaAnalisis->originalName = 'Conciliacion_'.$arrayHeadingInfoIata['referenceIata'].'.xlsx';
-                $objDocumentaAnalisis->diskName = 'Conciliacion_'.$uuid.'.xlsx';
-                $objDocumentaAnalisis->iata = $arrayHeadingInfoIata['referenceIata'];
-                $objDocumentaAnalisis->id = auth()->id();
-                $objDocumentaAnalisis->pkDocumentType = 4;
-                $objDocumentaAnalisis->pkPeriod = $arrayHeadingInfoIata['referencePeriod'];
-                $objDocumentaAnalisis->pkConciliation = $lastPkInsertedConciliation;
-                $objDocumentaAnalisis->save();
+                $objDocumentAnalisis = new Document();
+                $objDocumentAnalisis->originalName = 'Conciliacion_'.$arrayHeadingInfoIata['referenceIata'].'.xlsx';
+                $objDocumentAnalisis->diskName = 'Conciliacion_'.$uuid.'.xlsx';
+                $objDocumentAnalisis->iata = $arrayHeadingInfoIata['referenceIata'];
+                $objDocumentAnalisis->id = auth()->id();
+                $objDocumentAnalisis->pkDocumentType = 4;
+                $objDocumentAnalisis->pkPeriod = $arrayHeadingInfoIata['referencePeriod'];
+                $objDocumentAnalisis->pkConciliation = $lastPkInsertedConciliation;
+                $objDocumentAnalisis->save();
+
+                $objDocumentResumen = new Document();
+                $objDocumentResumen->originalName = 'Resumen_'.$arrayHeadingInfoIata['referenceIata'].'.xlsx';
+                $objDocumentResumen->diskName = 'Resumen_'.$uuid.'.xlsx';
+                $objDocumentResumen->iata = $arrayHeadingInfoIata['referenceIata'];
+                $objDocumentResumen->id = auth()->id();
+                $objDocumentResumen->pkDocumentType = 3;
+                $objDocumentResumen->pkPeriod = $arrayHeadingInfoIata['referencePeriod'];
+                $objDocumentResumen->pkConciliation = $lastPkInsertedConciliation;
+                $objDocumentResumen->save();
 
                 DB::commit();
             } catch (exception $e) {
@@ -431,7 +455,8 @@ class ConciliationController extends Controller
             $dataContentTable = '';
             $dataContentTable = $this->addRowDataContentTable($dataContentTable,$objDocumentIata);
             $dataContentTable = $this->addRowDataContentTable($dataContentTable,$objDocumentPrevio);
-            $dataContentTable = $this->addRowDataContentTable($dataContentTable,$objDocumentaAnalisis);
+            $dataContentTable = $this->addRowDataContentTable($dataContentTable,$objDocumentAnalisis);
+            $dataContentTable = $this->addRowDataContentTable($dataContentTable,$objDocumentResumen);
 
             $dataContentHeader = '';
             $dataContentHeader = $this->addContentHeader($dataContentHeader,$resultadosReportePrevioFueraPeriodo, $resultadosDomestico, $resultadosInternacional, $valorDiferencias, $valorReportePrevio, $grandTotal);
@@ -651,7 +676,7 @@ class ConciliationController extends Controller
 
                             /*********** END VALIDACION FACTURADO COMO VIVO ***********/
 
-                            /*********** STAR VALIDACION ALTERNATIVA  ***********/
+                            /*********** STAR VALIDACION NO CLASCIFICADA  ***********/
                         } else if ($tarifaNetoPagarPrevio != $netoPagar) {
 
                             $diferenciaFinal =  $netoPagar - $tarifaNetoPagarPrevio;
@@ -668,7 +693,7 @@ class ConciliationController extends Controller
                             //FIN Se llena array con resultados
 
                         }
-                        /*********** END VALIDACION ALTERNATIVA  ***********/
+                        /*********** END VALIDACION NO CLASCIFICADA  ***********/
                     }
                 }
             } else {
@@ -958,6 +983,64 @@ class ConciliationController extends Controller
                 </div>";
 
              return $dataContentHeader;        
+    }
+
+    private function getAllTicketsBsp($arrayTicketIata, $arrayAllTicketsBsp, $type)
+    {
+        
+        $keyPosition = 0;
+        $idBoletoIata = $arrayTicketIata[2];
+        $tipoBoleto = $arrayTicketIata[1];
+        foreach ($arrayTicketIata as $key => $value) {
+            if ($value == 'CC' || $value == 'CA') {
+
+                $valorTransaccion = $arrayTicketIata[$keyPosition + 1];
+                $valorTarifa = $arrayTicketIata[$keyPosition + 2];
+                $impuesto = $arrayTicketIata[$keyPosition + 3];
+                $tasasCargos = $arrayTicketIata[$keyPosition + 4];
+                $cobl = $arrayTicketIata[$keyPosition + 6];
+                $porcentajeComisionStd = $arrayTicketIata[$keyPosition + 7];
+                $valorComisionStd = $arrayTicketIata[$keyPosition + 8];
+                $porcentajeComisionSupp = $arrayTicketIata[$keyPosition + 9];
+                if ($porcentajeComisionSupp === NULL) {
+                    $keyPosition++;
+                }
+                $valorComisionSupp = $arrayTicketIata[$keyPosition + 10];
+                $impSobreComision = $arrayTicketIata[$keyPosition + 11];
+
+                $lastElement = endKey($arrayTicketIata);
+                $indiceSeg = $lastElement;
+                $netoPagar = NULL;
+
+                while ($netoPagar === NULL) {
+                    $netoPagar = $arrayTicketIata[$indiceSeg];
+                    $indiceSeg--;
+                }
+                $arrayResult = [];
+                //Se llena array con resultados
+                $arrayResult['L.A.'] = $arrayTicketIata[0];
+                $arrayTicketIata[3] == NULL ? $arrayResult['Fecha'] = $arrayTicketIata[4] : $arrayResult['Fecha'] = $arrayTicketIata[3];
+                $arrayResult['Boleto'] = $idBoletoIata;
+                $arrayResult['TipoAlcance'] = $type;
+                $arrayResult['TipoBoleto'] = $tipoBoleto;
+                $arrayResult['CACC'] = $value;
+                $arrayResult['Tarifa'] = $valorTarifa;
+                $arrayResult['Impuesto'] = $impuesto;
+                $arrayResult['ValorComisionStd'] = $valorComisionStd;
+                $arrayResult['ValorComisionSup'] = $valorComisionSupp;
+                $arrayResult['ImpuestoComision'] = $impSobreComision;
+                $arrayResult['TasasCargos'] = $tasasCargos;
+                $arrayResult['Total'] = ROUND($netoPagar, 2);
+
+                array_push($arrayAllTicketsBsp, $arrayResult);
+
+                
+            } else {
+                $keyPosition++;
+            }
+        }
+
+        return $arrayAllTicketsBsp;
     }
     /**
      * Remove the specified resource from storage.
