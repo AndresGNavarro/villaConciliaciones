@@ -2,12 +2,7 @@
 
 namespace App\Exports;
 
-use Carbon\Carbon;
-use Maatwebsite\Excel\Excel;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use App\Models\Period;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -23,6 +18,8 @@ class ConciliationExport implements WithEvents
     public $valorDiferencias;
     public $valorReportePrevio;
     public $grandTotal;
+    public $periodReference;
+    
     
     public function __construct(array $array)
     {
@@ -30,6 +27,7 @@ class ConciliationExport implements WithEvents
         $this->valorDiferencias = $array[1];
         $this->valorReportePrevio = $array[2];
         $this->grandTotal = $array[3];
+        $this->periodReference = $array[4];
     }
 
     public function registerEvents(): array
@@ -103,7 +101,8 @@ class ConciliationExport implements WithEvents
                 ],
             ];
             /* Headings */
-            $event->sheet->getDelegate()->setCellValue('A1',"DIFERENCIAS");
+            $iataPeriodDescription = Period::where('pkPeriod', $this->periodReference)->get()->toArray();
+            $event->sheet->getDelegate()->setCellValue('A1',"DIFERENCIAS ".$iataPeriodDescription[0]['description']);
             $event->sheet->getDelegate()->setCellValue('G1',"RESUMEN");
             /* Merge heading */
             $event->sheet->getDelegate()->mergeCells("A1:E1");

@@ -400,7 +400,7 @@ class ConciliationController extends Controller
 
                 $uuid = Str::uuid()->toString();
                 //Devuelve True or false
-                $pathPrevio = Excel::store(new ConciliationExport([$newArrayResultTickets, $valorDiferencias, $valorReportePrevio, $grandTotal]), 'Conciliacion_'.$uuid.'.xlsx', 'documents');
+                $pathPrevio = Excel::store(new ConciliationExport([$newArrayResultTickets, $valorDiferencias, $valorReportePrevio, $grandTotal,$arrayHeadingInfoIata['referencePeriod']]), 'Conciliacion_'.$uuid.'.xlsx', 'documents');
                 $pathResumen = Excel::store(new ResumenConciliationExport([$arrayAllTicketsBsp, $grandTotal, $arrayHeadingInfoIata['referencePeriod'], $arrayHeadingInfoIata['referenceIata']]), 'Resumen_'.$uuid.'.xlsx', 'documents');
                 
                 // Upload files
@@ -1051,8 +1051,36 @@ class ConciliationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Conciliation $conciliation)
     {
-        //
+        $pkConciliation = $conciliation->pkConciliation;
+    
+        try {
+            DB::beginTransaction();
+            //GET ALL DOCUMENTS ASOCIATED WITH THE CONCILIATION
+            $objDocumentsAsignedToConciliation = Document::join('conciliations', 'documents.pkConciliation', '=', 'conciliations.pkConciliation')
+            ->where('documents.pkConciliation', $pkConciliation)
+            ->select([
+                'documents.pkDocument',
+                'documents.originalName',
+                'documents.diskName',
+                'conciliations.pkConciliation',
+            ])
+            ->get()
+            ->toArray();
+
+            foreach ($objDocumentsAsignedToConciliation as $key => $document) {
+                DB::table('documents')->where('pkConciliation', $pkConciliation)->delete();
+                Storage::disk('documents')->delete('/', $document['diskName']);
+            }   
+
+            $conciliation->delete();
+        
+            DB::commit();
+        } catch (exception $e) {
+            DB::rollback();
+            return redirect()->route('user.index')->with('notificationDanger', 'Ha ocurrido un error al intentar eliminar el registro ' . $pkConciliation . '!');
+        }
+        return redirect()->route('user.index')->with('notification', 'El registro ' . $pkConciliation . ' se ha eliminado correctamente');
     }
 }

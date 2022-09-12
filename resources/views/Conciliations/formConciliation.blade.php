@@ -191,6 +191,19 @@
                             footer: '<a href="">Es necesario validar la información de la IATA sus documentos</a>'
                             })
                         }
+                        if (response.errorFile1 || response.errorFile2) {
+                            $("#dropzoneArea").show();
+                            $("#spinner-loader").css('display','none');
+                            $('#submitButton').attr('disabled', false);
+                            Dropzone.forElement('#dropzoneIata').removeAllFiles(true);
+                            Dropzone.forElement('#dropzonePrevio').removeAllFiles(true);
+                            Swal.fire({
+                            type: 'warning',
+                            title: 'Oops...',
+                            text: 'Es necesario cargar ambos documentos para procesarlos',
+                            footer: '<a href="">Si el error persiste contactar al administrador</a>'
+                            })
+                        }
                         if (response.dataContentTable) {
 
                         $("#table-documentsToAdd").show();

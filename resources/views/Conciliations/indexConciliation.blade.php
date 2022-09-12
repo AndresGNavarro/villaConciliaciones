@@ -77,10 +77,17 @@
                                         {{ $row->period->description }}
                                     </td>
                                     <td class="text-center">
+                                        <form action="{{ url('/conciliation/'.$row->pkConciliation) }}" method="post">
+                                            @csrf
+                                            @method('DELETE')
                                         <a href="{{ url('/conciliation/' . $row->pkConciliation . '/show') }}"
                                             class="btn btn-primary btn-icon-only">
                                             <span class="btn-inner--icon"><i class="ni ni-folder-17"></i></span>
                                         </a>
+                                        <button class="btn btn-danger btn-icon-only" onclick="return deleteItem(this.form)" data-toggle="tooltip" data-placement="left" title="Eliminar conciliación">
+                                            <span class="btn-inner--icon"> <i class="ni ni-fat-remove"></i></span>
+                                        </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @endif
@@ -131,6 +138,35 @@
                 .tables( { visible: true, api: true } )
                 .columns.adjust();
         });
+
+        deleteItem = (form) =>{
+
+        Flag = true;
+
+        Swal.fire({
+            title: "Estás seguro?",
+            text: "Esta acción no podrá ser revertida",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, eliminar registro",
+            cancelButtonText: "Cancelar!",
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+        }).then(function(willDelete) {
+            if (willDelete.value) {
+                form.submit();
+                Flag = false;
+                return true;
+            } else if (willDelete.dismiss === "cancel") {
+                Flag = true;
+                return false;
+            }
+        });
+
+        if(Flag){
+            return false;
+        }
+        }
  
     </script>
 @endpush
