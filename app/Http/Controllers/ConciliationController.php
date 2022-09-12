@@ -1079,8 +1079,8 @@ class ConciliationController extends Controller
             DB::commit();
         } catch (exception $e) {
             DB::rollback();
-            return redirect()->route('user.index')->with('notificationDanger', 'Ha ocurrido un error al intentar eliminar el registro ' . $pkConciliation . '!');
+            return redirect()->route('conciliation.index')->with('notificationDanger', 'Ha ocurrido un error al intentar eliminar el registro ' . $pkConciliation . '!');
         }
-        return redirect()->route('user.index')->with('notification', 'El registro ' . $pkConciliation . ' se ha eliminado correctamente');
+        return redirect()->route('conciliation.index')->with('notification', 'El registro ' . $pkConciliation . ' se ha eliminado correctamente');
     }
 }

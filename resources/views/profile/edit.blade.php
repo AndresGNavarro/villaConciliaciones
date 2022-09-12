@@ -77,11 +77,19 @@
                             @csrf
                             @method('put')
 
-                            <h6 class="heading-small text-muted mb-4">{{ __('User information') }}</h6>
+                            <h6 class="heading-small text-muted mb-4">{{ __('Información de usuario') }}</h6>
                             
                             @if (session('status'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     {{ session('status') }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            @endif
+                            @if (session('notificationDanger'))
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ session('notificationDanger') }}
                                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -131,6 +139,14 @@
                                     </button>
                                 </div>
                             @endif
+                            @if (session('notificationPasswordDanger'))
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    {{ session('notificationPasswordDanger') }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            @endif
 
                             <div class="pl-lg-4">
                                 <div class="form-group{{ $errors->has('old_password') ? ' has-danger' : '' }}">
@@ -159,7 +175,7 @@
                                 </div>
 
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-success mt-4">{{ __('Change password') }}</button>
+                                    <button type="submit" class="btn btn-success mt-4">{{ __('Cambiar contraseña') }}</button>
                                 </div>
                             </div>
                         </form>
