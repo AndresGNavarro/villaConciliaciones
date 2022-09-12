@@ -75,7 +75,8 @@ class ConciliationController extends Controller
     {
         //Recibir y validar archivos
         $validator = Validator::make($request->all(), [
-            'files.*' => 'required|mimes:xls,xlsx|max:2048'
+            'file0' => 'required|max:2048',
+            'file1' => 'required|max:2048'
         ]);
 
         if ($validator->fails()) {
@@ -83,6 +84,8 @@ class ConciliationController extends Controller
             $data['success'] = 0;
             $data['errorFile1'] = $validator->errors()->first('file0'); // Error response
             $data['errorFile2'] = $validator->errors()->first('file1'); // Error response
+
+            return response()->json($data);
 
         } else {
             try {
@@ -448,7 +451,7 @@ class ConciliationController extends Controller
             } catch (exception $e) {
                 DB::rollBack();
                 $data['success'] = 0;
-                $data['error'] = $e;
+                $data['error'] = $e->getMessage();
                 return response()->json($data);
             }
             

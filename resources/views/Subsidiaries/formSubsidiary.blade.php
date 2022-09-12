@@ -20,7 +20,7 @@
                     </div>
                     
                     <div class="card-body">
-                        <form action="/subsidiary/create" method="post">
+                        <form action="{{ route('subsidiary.store') }}" method="post">
                             @csrf
                             <div class="row">
                                 <div class="form-group col-xs-12 col-sm-6 col-md-6">

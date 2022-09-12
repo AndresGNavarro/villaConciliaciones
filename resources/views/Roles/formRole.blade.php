@@ -20,7 +20,7 @@
             </div>
 
             <div class="card-body">
-                <form action="/role/create" method="post">
+                <form action="{{ route('role.store') }}" method="post">
                     @csrf
                     <div class="row">
                         <div class="form-group col-xs-12 col-sm-6 col-md-6">

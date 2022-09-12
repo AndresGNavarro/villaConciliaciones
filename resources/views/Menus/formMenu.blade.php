@@ -25,7 +25,7 @@
                     </div>
                     
                     <div class="card-body">
-                        <form action="/menu/create" method="post">
+                        <form action="{{ route('menu.store') }}" method="post">
                             @csrf
                             <div class="row">
                                 <div class="form-group col-xs-12 col-sm-6 col-md-3">
