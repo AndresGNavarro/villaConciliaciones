@@ -141,11 +141,9 @@
 
         deleteItem = (form) =>{
 
-        Flag = true;
-
         Swal.fire({
-            title: "Estás seguro?",
-            text: "Esta acción no podrá ser revertida",
+            title: "¿Estás seguro?",
+            text: "Los cambios no podrán ser revertidos",
             type: "warning",
             showCancelButton: true,
             confirmButtonText: "Sí, eliminar registro",
@@ -155,17 +153,15 @@
         }).then(function(willDelete) {
             if (willDelete.value) {
                 form.submit();
-                Flag = false;
+                
                 return true;
             } else if (willDelete.dismiss === "cancel") {
-                Flag = true;
+                
                 return false;
             }
         });
 
-        if(Flag){
-            return false;
-        }
+        return false;
         }
  
     </script>

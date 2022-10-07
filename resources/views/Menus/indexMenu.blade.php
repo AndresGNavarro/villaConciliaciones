@@ -137,31 +137,27 @@
 
         deleteItem = (form) =>{
 
-            Flag = true;
-
-            Swal.fire({
-                title: "Estás seguro?",
-                text: "Esta acción deshabilitará el acceso a los usuarios con esta ruta registrada",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonText: "Sí, deshabilitar registro",
-                cancelButtonText: "Cancelar!",
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-            }).then(function(willDelete) {
-                if (willDelete.value) {
-                    form.submit();
-                    Flag = false;
-                    return true;
-                } else if (willDelete.dismiss === "cancel") {
-                    Flag = true;
-                    return false;
-                }
-            });
-
-            if(Flag){
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "Esta acción deshabilitará el acceso a los usuarios con esta ruta registrada",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, eliminar registro",
+            cancelButtonText: "Cancelar!",
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+        }).then(function(willDelete) {
+            if (willDelete.value) {
+                form.submit();
+                
+                return true;
+            } else if (willDelete.dismiss === "cancel") {
+                
                 return false;
             }
+        });
+
+        return false;
         }
     </script>
 @endpush
