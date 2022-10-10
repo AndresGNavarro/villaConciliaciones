@@ -95,7 +95,7 @@ class ConciliationController extends Controller
                 $importPrevio = new DocumentPrevioImport;
                 Excel::import($importPrevio, $filePrevio[0]);
                 $dataArrayPrevio = $importPrevio->getArray();
-
+                
                 $fileIata = $request->file('file1');
                 $fileNameIata = $fileIata[0]->getClientOriginalName();
                 $dataArrayIata = Excel::toArray(new DocumentIataImport, $fileIata[0]);
@@ -103,7 +103,7 @@ class ConciliationController extends Controller
                 
                 //GET INFO LIKE PERIOD, DESCRIPTION PERIOD AND IATA REFERENCE
                 $arrayHeadingInfoIata = $this->getHeadingInfoDocIata($dataArrayIata);
-                
+               
                 //VALIDATION IATA ALLOWED TO USER
                 $idUser = auth()->id();
                 $objUserSubsidiary = User::join('user_subsidiary', 'users.id', 'user_subsidiary.id')
@@ -342,7 +342,7 @@ class ConciliationController extends Controller
                 $renglonFinalVentaContado = $indicesTipoVenta[0];
                 $valorReportePrevio = 0;
 
-                for ($h = 8; $h < $renglonFinalVentaContado ; $h++) {
+                for ($h = 7; $h < $renglonFinalVentaContado ; $h++) {
 
                     //INICIO Final del calculo de total de reporte previo (sumando las columnas del precio de contado y restando las comisiones).
                     $idBoleto = $dataArrayPrevio[$h]['numeroBoleto'];
