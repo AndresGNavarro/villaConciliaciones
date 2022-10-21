@@ -400,7 +400,7 @@ class ConciliationController extends Controller
 
                 $uuid = Str::uuid()->toString();
                 //Devuelve True or false
-                $pathPrevio = Excel::store(new ConciliationExport([$newArrayResultTickets, $valorDiferencias, $valorReportePrevio, $grandTotal,$arrayHeadingInfoIata['referencePeriod']]), 'Conciliacion_'.$uuid.'.xlsx', 'documents');
+                $pathPrevio = Excel::store(new ConciliationExport([$newArrayResultTickets, $valorDiferencias, $valorReportePrevio, $grandTotal,$arrayHeadingInfoIata['referencePeriod'], $arrayHeadingInfoIata['referenceIata']]), 'Conciliacion_'.$uuid.'.xlsx', 'documents');
                 $pathResumen = Excel::store(new ResumenConciliationExport([$arrayAllTicketsBsp, $grandTotal, $arrayHeadingInfoIata['referencePeriod'], $arrayHeadingInfoIata['referenceIata']]), 'Resumen_'.$uuid.'.xlsx', 'documents');
                 
                 // Upload files
@@ -524,7 +524,7 @@ class ConciliationController extends Controller
                     $indiceBoletoPrevio = array_keys($arrayBoletoPrevio);
                     $cantidadDeBoletosPrevio = sizeof($arrayBoletoPrevio);
                     
-                    $tarifaNetoPagarPrevio = $arrayBoletoPrevio[$indiceBoletoPrevio[0]]['netoPagar'];
+                    $tarifaNetoPagarPrevio = ROUND($arrayBoletoPrevio[$indiceBoletoPrevio[0]]['netoPagar'],2);
                     $tarifaContadoPrevio = $arrayBoletoPrevio[$indiceBoletoPrevio[0]]['contado'];
                     $tarifaCreditoPrevio = $arrayBoletoPrevio[$indiceBoletoPrevio[0]]['credito'];
                     $ivaBsp = $arrayBoletoPrevio[$indiceBoletoPrevio[0]]['iva'];
@@ -681,7 +681,7 @@ class ConciliationController extends Controller
 
                             /*********** STAR VALIDACION NO CLASCIFICADA  ***********/
                         } else if ($tarifaNetoPagarPrevio != $netoPagar) {
-
+                            
                             $diferenciaFinal =  $netoPagar - $tarifaNetoPagarPrevio;
                             //INICIO Se llena array con resultados
                             $arrayDiferenciaNoClascificadaResult = [];
@@ -905,7 +905,7 @@ class ConciliationController extends Controller
                     <input type='hidden' name='referencePeriod[]'  value='{$objDocument->period->reference}'>
 
                     <td scope='row' style = 'white-space: nowrap;'>{$objDocument->originalName}</td>
-                    <td scope='row' style = 'white-space: nowrap;'><b>{$objDocument->period->reference}</b>
+                    <td scope='row' style = 'white-space: nowrap;'><b>{$objDocument->iata}</b>
                     </td>
                     <td scope='row' style = 'white-space: nowrap;'>{$objDocument->period->description}
                     </td>

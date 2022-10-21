@@ -58,7 +58,7 @@
                         <thead class="thead-light">
                             <tr>
                                 <th scope="col">Id</th>
-                                <th scope="col">Referencia</th>
+                                <th scope="col">IATA</th>
                                 <th scope="col">Descripción</th>
                                 <th class="text-center" scope="col">Opciones</th>
                             </tr>

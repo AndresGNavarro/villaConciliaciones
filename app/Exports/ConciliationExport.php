@@ -19,6 +19,7 @@ class ConciliationExport implements WithEvents
     public $valorReportePrevio;
     public $grandTotal;
     public $periodReference;
+    public $iata;
     
     
     public function __construct(array $array)
@@ -28,6 +29,7 @@ class ConciliationExport implements WithEvents
         $this->valorReportePrevio = $array[2];
         $this->grandTotal = $array[3];
         $this->periodReference = $array[4];
+        $this->iata = $array[5];
     }
 
     public function registerEvents(): array
@@ -103,9 +105,11 @@ class ConciliationExport implements WithEvents
             /* Headings */
             $iataPeriodDescription = Period::where('pkPeriod', $this->periodReference)->get()->toArray();
             $event->sheet->getDelegate()->setCellValue('A1',"DIFERENCIAS ".$iataPeriodDescription[0]['description']);
+            $event->sheet->getDelegate()->setCellValue('A2',"IATA: ".$this->iata);
             $event->sheet->getDelegate()->setCellValue('G1',"RESUMEN");
             /* Merge heading */
             $event->sheet->getDelegate()->mergeCells("A1:E1");
+            $event->sheet->getDelegate()->mergeCells("A2:B2");
             $event->sheet->getDelegate()->mergeCells("G1:M1");
             $event->sheet->getDelegate()->mergeCells("G4:J4");
             $event->sheet->getDelegate()->mergeCells("K4:M4");
@@ -131,7 +135,7 @@ class ConciliationExport implements WithEvents
             $event->sheet->getDelegate()->getColumnDimension('E')->setWidth(12);
            
             //set font style and background color E
-            $event->sheet->getDelegate()->getStyle('A2:E2')->applyFromArray($tableHead);
+            $event->sheet->getDelegate()->getStyle('A3:E3')->applyFromArray($tableHead);
             $event->sheet->getDelegate()->getStyle('G4:J4')->applyFromArray($tableHead);
             $event->sheet->getDelegate()->getStyle('G6:J6')->applyFromArray($tableHead);
             $event->sheet->getDelegate()->getStyle('G8:J8')->applyFromArray($tableHead);
@@ -150,11 +154,11 @@ class ConciliationExport implements WithEvents
     private function populateSheet($sheet){
 
         // Populate the static cells
-        $sheet->setCellValue('A2',"L.A.");
-        $sheet->setCellValue('B2',"FECHA");
-        $sheet->setCellValue('C2',"CONCEPTO");
-        $sheet->setCellValue('D2',"BOLETO");
-        $sheet->setCellValue('E2',"TOTAL");
+        $sheet->setCellValue('A3',"L.A.");
+        $sheet->setCellValue('B3',"FECHA");
+        $sheet->setCellValue('C3',"CONCEPTO");
+        $sheet->setCellValue('D3',"BOLETO");
+        $sheet->setCellValue('E3',"TOTAL");
         $sheet->setCellValue('G4',"VALOR DEL REPORTE PREVIO:");
         $sheet->setCellValue('G6',"DIFERENCIAS CONCILIACIÓN:"); 
         $sheet->setCellValue('G8',"VALOR DE LA FACTURA BSP:"); 
@@ -163,8 +167,8 @@ class ConciliationExport implements WithEvents
         // Create the collection based on received ids
         //$orders = Order::whereIn('id', $this->orderIds)->get();
 
-        // Party starts at row 3
-        $iteration = 3;
+        // Party starts at row 4
+        $iteration = 4;
 
         foreach ($this->newArrayResultTickets as $resultRow) {
 

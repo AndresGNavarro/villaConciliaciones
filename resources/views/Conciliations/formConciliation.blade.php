@@ -101,7 +101,7 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th scope="col">Nombre documento</th>
-                                    <th scope="col">Iata</th>
+                                    <th scope="col">IATA</th>
                                     <th scope="col">Referencia periodo</th>
                                     <th class="text-center" scope="col">Opciones</th>
                                 </tr>
