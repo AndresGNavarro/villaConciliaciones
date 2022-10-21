@@ -60,8 +60,7 @@ class ConciliationController extends Controller
     {
         $objDocumentConciliation = Document::where('pkConciliation', $conciliation->pkConciliation)->get();
         $baseMargen = $conciliation->valuePreviousReport+$conciliation->valueDiferences;
-        $variabilidad = $baseMargen/$conciliation->valueInvoiceBsp;
-        $variabilidad = $variabilidad *100;
+        $variabilidad = ROUND(($baseMargen/$conciliation->valueInvoiceBsp)*100,2);
         return view('Conciliations.viewConciliation', compact('conciliation', 'objDocumentConciliation','variabilidad'));
     }
 
@@ -381,7 +380,7 @@ class ConciliationController extends Controller
                 foreach ($resultadosReportePrevioFueraPeriodo as $value) {
                     $valorPrevioFueraPeriodo += $value['Total'];
                 }
-                $valorDiferencias = $valorIataDomestico + $valorIataInternacional + $valorPrevioFueraPeriodo;
+                $valorDiferencias = ROUND($valorIataDomestico + $valorIataInternacional + $valorPrevioFueraPeriodo,2);
 
                 DB::beginTransaction();
                 $objConciliation = new Conciliation();
@@ -523,7 +522,7 @@ class ConciliationController extends Controller
                     //Obtiene el renglón sobre el que se encuentra cada boleto y se cuenta la cantidad de estos
                     $indiceBoletoPrevio = array_keys($arrayBoletoPrevio);
                     $cantidadDeBoletosPrevio = sizeof($arrayBoletoPrevio);
-                    
+
                     $tarifaNetoPagarPrevio = ROUND($arrayBoletoPrevio[$indiceBoletoPrevio[0]]['netoPagar'],2);
                     $tarifaContadoPrevio = $arrayBoletoPrevio[$indiceBoletoPrevio[0]]['contado'];
                     $tarifaCreditoPrevio = $arrayBoletoPrevio[$indiceBoletoPrevio[0]]['credito'];
@@ -927,8 +926,7 @@ class ConciliationController extends Controller
             $totalResultadosInternacional = count($resultadosInternacional);
             $totalRegistros = $totalResultadosPrevio+$totalResultadosDomestico+$totalResultadosInternacional; 
             $baseMargen = $valorReportePrevio+$valorDiferencias;
-            $variabilidad = $baseMargen/$grandTotal;
-            $variabilidad = $variabilidad *100;
+            $variabilidad = ROUND(($baseMargen/$grandTotal)*100,2);
             $dataContentHeader .=
                     "
                 <div class='row'>
