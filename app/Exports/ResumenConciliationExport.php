@@ -203,7 +203,7 @@ class ResumenConciliationExport implements WithEvents
                 $valorCreditoTktsInternacional += $resultRow['Tarifa'];
                 $valorNetoCreditoTktsInternacional += $resultRow['Total'];
                 $valorCreditoTktsInternacionalImp += $resultRow['Impuesto'] + $resultRow['TasasCargos'];
-                $valorCreditoTktsInternacionalComision += $resultRow['ValorComisionStd'] + $resultRow['ValorComisionSup'];
+                $valorCreditoTktsInternacionalComision += (int)$resultRow['ValorComisionStd'] + (int)$resultRow['ValorComisionSup'];
                 $valorCreditoTktsInternacionalIvaComision += $resultRow['ImpuestoComision'];
             }
 
