@@ -117,7 +117,15 @@ class ConciliationController extends Controller
                     $data['error'] = 'Su usuario no tiene relación con la IATA ('.$arrayHeadingInfoIata['referenceIata'].') agregada en el documento';
                     return response()->json($data);
                 }
-                
+
+                //VALIDATION RELATION IATAS BETWEEN DOCUMENTS
+                $resultValidationRelationIataDoc = $this->validateRelationDocuments($dataArrayPrevio, $arrayHeadingInfoIata['referenceIata']);
+                if ($resultValidationRelationIataDoc == '') {
+                    $data['success'] = 0;
+                    $data['error'] = 'Documento previo no tiene relación con la IATA ('.$arrayHeadingInfoIata['referenceIata'].')';
+                    return response()->json($data);
+                }
+
                 //STAR OF DOMESTIC AND INTERNATIONAL TICKETING (IN THE DOCUMENT WE CAN IDENTIFY THE HEADERS WITH "SCOPE" SINCE IT IS ONLY DECLARED IN THOSE TITLES)
                 $arrayTipoBoleto = searchThroughArray('SCOPE', $dataArrayIata);
 
@@ -1042,6 +1050,59 @@ class ConciliationController extends Controller
         }
 
         return $arrayAllTicketsBsp;
+    }
+
+    public function validateRelationDocuments($dataArrayPrevio, $iataReference)
+    {
+        //Comparativos de claves según IATA
+        $keyOption  = '';
+
+        if ($iataReference == '86515984') {
+            $arrayOptionKey = ['DEMEX','DMX','MEXFE','MXF'];
+            
+            foreach ($arrayOptionKey as $key => $value) {
+                $arrayOptionKeyFound = searchThroughArray($value, $dataArrayPrevio);
+                if (!empty($arrayOptionKeyFound)) {
+                    $keyOption = $value;
+                    break;
+                }
+            }
+        }else if($iataReference == '86502194'){
+            $arrayOptionKey = ['DEGDL','GDLFE'];
+            
+            foreach ($arrayOptionKey as $key => $value) {
+                $arrayOptionKeyFound = searchThroughArray($value, $dataArrayPrevio);
+                if (!empty($arrayOptionKeyFound)) {
+                    $keyOption = $value;
+                    break;
+                }
+            }
+        }else if($iataReference == '86511574'){
+            $arrayOptionKey = ['DEMTY','MTYFE'];
+            
+            foreach ($arrayOptionKey as $key => $value) {
+                $arrayOptionKeyFound = searchThroughArray($value, $dataArrayPrevio);
+                if (!empty($arrayOptionKeyFound)) {
+                    $keyOption = $value;
+                    break;
+                }
+            }
+        }else if($iataReference == '86515973'){
+            $arrayOptionKey = ['DESAN','SANFE'];
+            
+            foreach ($arrayOptionKey as $key => $value) {
+                $arrayOptionKeyFound = searchThroughArray($value, $dataArrayPrevio);
+                if (!empty($arrayOptionKeyFound)) {
+                    $keyOption = $value;
+                    break;
+                }
+            }
+        }
+
+        return $keyOption;
+
+        
+        
     }
     /**
      * Remove the specified resource from storage.
