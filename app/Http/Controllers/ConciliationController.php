@@ -243,7 +243,7 @@ class ConciliationController extends Controller
                         //PROCESS VALIDATION
                         $resultadosInternacional = $this->analysisAdma($dataArrayIata[$i], $resultadosInternacional, $dataArrayPrevio);
                         $arrayAllTicketsBsp = $this->getAllTicketsBsp($dataArrayIata[$i],$arrayAllTicketsBsp, $type = 'I');
-                    } elseif ($dataArrayIata[$i][1] == 'ACMA') {
+                    } elseif ($dataArrayIata[$i][1] == 'ACMA' OR $dataArrayIata[$i][1] == 'SPCR') {
                         $totalBoletosInternacional++;
                         $totalBoletosInternacionalACMA++;
 
@@ -328,7 +328,7 @@ class ConciliationController extends Controller
                         //PROCESS VALIDATION
                         $resultadosDomestico = $this->analysisAdma($dataArrayIata[$i], $resultadosDomestico, $dataArrayPrevio);
                         $arrayAllTicketsBsp = $this->getAllTicketsBsp($dataArrayIata[$i], $arrayAllTicketsBsp,$type = 'D');
-                    } elseif ($dataArrayIata[$i][1] == 'ACMA') {
+                    } elseif ($dataArrayIata[$i][1] == 'ACMA' OR $dataArrayIata[$i][1] == 'SPCR') {
                         $totalBoletosDomestico++;
                         $totalBoletosDomesticoACMA++;
 
