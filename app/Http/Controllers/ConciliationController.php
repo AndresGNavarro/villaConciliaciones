@@ -17,6 +17,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use App\Imports\DocumentIataImport;
 use App\Imports\DocumentPrevioImport;
+use App\Imports\DocumentPrevioObsImport;
 
 
 class ConciliationController extends Controller
@@ -94,7 +95,11 @@ class ConciliationController extends Controller
                 $importPrevio = new DocumentPrevioImport;
                 Excel::import($importPrevio, $filePrevio[0]);
                 $dataArrayPrevio = $importPrevio->getArray();
-                
+
+                $importPrevioObservaciones = new DocumentPrevioObsImport;
+                Excel::import($importPrevioObservaciones, $filePrevio[0]);
+                $dataArrayObsPrevio = $importPrevioObservaciones->getArray();
+            
                 $fileIata = $request->file('file1');
                 $fileNameIata = $fileIata[0]->getClientOriginalName();
                 $dataArrayIata = Excel::toArray(new DocumentIataImport, $fileIata[0]);
@@ -348,7 +353,7 @@ class ConciliationController extends Controller
                 $indicesTipoVenta = array_keys($arrayTipoVenta);
                 $renglonFinalVentaContado = $indicesTipoVenta[0];
                 $valorReportePrevio = 0;
-
+                /* dd($dataArrayObsPrevio); */
                 for ($h = 7; $h < $renglonFinalVentaContado ; $h++) {
 
                     //INICIO Final del calculo de total de reporte previo (sumando las columnas del precio de contado y restando las comisiones).
@@ -358,18 +363,34 @@ class ConciliationController extends Controller
                     #Buscamos boleto en  archivo de todos los tickets y en caso de no encontrarlo lo identificamos como fuera de periodo
                     $arrayBoletoBsp = searchThroughArray($idBoleto, $arrayAllTickets);
                     if ($arrayBoletoBsp == NULL) {
+                        //Si el boleto no es encontrado antes de definirlo como fuera de periodo validamos que no tenga conjunto
+                        
+                        if (strpos($dataArrayObsPrevio[$h]['observaciones'], 'CONJUNTO') !== false) {
+                            //INICIO Se llena array con resultados
+                            $arrayBoletoFueraPeriodoResult = [];
+                            //Se llena array con resultados
+                            $arrayBoletoFueraPeriodoResult['L.A.'] = $dataArrayPrevio[$h]['lineaAerea'];
+                            $arrayBoletoFueraPeriodoResult['Fecha'] = $dataArrayPrevio[$h]['fechaEmision'];
+                            $arrayBoletoFueraPeriodoResult['Concepto'] = $dataArrayObsPrevio[$h]['observaciones'];
+                            $arrayBoletoFueraPeriodoResult['Boleto'] = $idBoleto;
+                            $arrayBoletoFueraPeriodoResult['Total'] = ROUND(-$dataArrayPrevio[$h]['netoPagar'], 2);
 
-                        //INICIO Se llena array con resultados
-                        $arrayBoletoFueraPeriodoResult = [];
-                        //Se llena array con resultados
-                        $arrayBoletoFueraPeriodoResult['L.A.'] = $dataArrayPrevio[$h]['lineaAerea'];
-                        $arrayBoletoFueraPeriodoResult['Fecha'] = $dataArrayPrevio[$h]['fechaEmision'];
-                        $arrayBoletoFueraPeriodoResult['Concepto'] = 'BOLETO FUERA DE PERIODO';
-                        $arrayBoletoFueraPeriodoResult['Boleto'] = $idBoleto;
-                        $arrayBoletoFueraPeriodoResult['Total'] = ROUND(-$dataArrayPrevio[$h]['netoPagar'], 2);
+                            array_push($resultadosReportePrevioFueraPeriodo, $arrayBoletoFueraPeriodoResult);
+                            //FIN Se llena array con resultados
+                        } else {
+                            //INICIO Se llena array con resultados
+                            $arrayBoletoFueraPeriodoResult = [];
+                            //Se llena array con resultados
+                            $arrayBoletoFueraPeriodoResult['L.A.'] = $dataArrayPrevio[$h]['lineaAerea'];
+                            $arrayBoletoFueraPeriodoResult['Fecha'] = $dataArrayPrevio[$h]['fechaEmision'];
+                            $arrayBoletoFueraPeriodoResult['Concepto'] = 'BOLETO FUERA DE PERIODO';
+                            $arrayBoletoFueraPeriodoResult['Boleto'] = $idBoleto;
+                            $arrayBoletoFueraPeriodoResult['Total'] = ROUND(-$dataArrayPrevio[$h]['netoPagar'], 2);
 
-                        array_push($resultadosReportePrevioFueraPeriodo, $arrayBoletoFueraPeriodoResult);
-                        //FIN Se llena array con resultados
+                            array_push($resultadosReportePrevioFueraPeriodo, $arrayBoletoFueraPeriodoResult);
+                            //FIN Se llena array con resultados
+                        }
+                         
                     }
                     //FINAL del calculo de total de reporte previo
 

@@ -128,10 +128,10 @@ class ConciliationExport implements WithEvents
             $event->sheet->getDelegate()->getStyle('G1:M1')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THICK);
 
             //setting column width
-            $event->sheet->getDelegate()->getColumnDimension('A')->setWidth(5);
-            $event->sheet->getDelegate()->getColumnDimension('B')->setWidth(20);
-            $event->sheet->getDelegate()->getColumnDimension('C')->setWidth(40);
-            $event->sheet->getDelegate()->getColumnDimension('D')->setWidth(20);
+            $event->sheet->getDelegate()->getColumnDimension('A')->setWidth(20);
+            $event->sheet->getDelegate()->getColumnDimension('B')->setWidth(5);
+            $event->sheet->getDelegate()->getColumnDimension('C')->setWidth(20);
+            $event->sheet->getDelegate()->getColumnDimension('D')->setWidth(40);
             $event->sheet->getDelegate()->getColumnDimension('E')->setWidth(12);
            
             //set font style and background color E
@@ -154,10 +154,10 @@ class ConciliationExport implements WithEvents
     private function populateSheet($sheet){
 
         // Populate the static cells
-        $sheet->setCellValue('A3',"L.A.");
-        $sheet->setCellValue('B3',"FECHA");
-        $sheet->setCellValue('C3',"CONCEPTO");
-        $sheet->setCellValue('D3',"BOLETO");
+        $sheet->setCellValue('A3',"FECHA");
+        $sheet->setCellValue('B3',"L.A.");
+        $sheet->setCellValue('C3',"BOLETO");
+        $sheet->setCellValue('D3',"CONCEPTO");
         $sheet->setCellValue('E3',"TOTAL");
         $sheet->setCellValue('G4',"VALOR DEL REPORTE PREVIO:");
         $sheet->setCellValue('G6',"DIFERENCIAS CONCILIACIÓN:"); 
@@ -180,13 +180,13 @@ class ConciliationExport implements WithEvents
             $E = "E".($iteration);
 
             // Populate dynamic content
-            $sheet->setCellValue($A, $resultRow['L.A.']);
-            $sheet->setCellValue($B, $resultRow['Fecha']);
-            $sheet->setCellValue($C, $resultRow['Concepto']);
-            $sheet->setCellValue($D, $resultRow['Boleto']);
+            $sheet->setCellValue($A, $resultRow['Fecha']);
+            $sheet->setCellValue($B, $resultRow['L.A.']);
+            $sheet->setCellValue($C, $resultRow['Boleto']);
+            $sheet->setCellValue($D, $resultRow['Concepto']);
             $sheet->setCellValue($E, $resultRow['Total']);
 
-            $sheet->getStyle($B)
+            $sheet->getStyle($A)
             ->getNumberFormat()
             ->setFormatCode(
                 NumberFormat::FORMAT_DATE_YYYYMMDDSLASH
