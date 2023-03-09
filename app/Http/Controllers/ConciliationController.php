@@ -565,8 +565,15 @@ class ConciliationController extends Controller
                         for ($j = 0; $j < $cantidadDeBoletosPrevio; $j++) {
                         
                             $tarifaNetoPagarPrevio = $arrayBoletoPrevio[$indiceBoletoPrevio[$j]]['netoPagar'];
+                            $tarifaContadoPrevio = $arrayBoletoPrevio[$indiceBoletoPrevio[$j]]['contado'];
+                            $tarifaCreditoPrevio = $arrayBoletoPrevio[$indiceBoletoPrevio[$j]]['credito'];
+                            $porcentajeComisionPrevio = $arrayBoletoPrevio[$indiceBoletoPrevio[$j]]['porcentajeComision'];
+                            $comisionPrevio = $arrayBoletoPrevio[$indiceBoletoPrevio[$j]]['comision'];
+                            $ivaBsp = $arrayBoletoPrevio[$indiceBoletoPrevio[$j]]['iva'];
+                            $tuaBsp = $arrayBoletoPrevio[$indiceBoletoPrevio[$j]]['tua'];
+
                             $description = 'BOLETO REPETIDO EN BACK OFFICE';
-                            if ($tarifaNetoPagarPrevio != 0) {
+                            if ($tarifaContadoPrevio != 0 || $tarifaCreditoPrevio != 0 ) {
                                 if ($value == 'CC' && $tarifaContadoPrevio != 0 && $tarifaCreditoPrevio == 0) {
                                     $description = 'BOLETO PAGADO DE CREDITO';
                                 } else if($value == 'CA' && $tarifaContadoPrevio == 0 && $tarifaCreditoPrevio != 0) {
