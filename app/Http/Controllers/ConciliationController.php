@@ -1106,7 +1106,7 @@ class ConciliationController extends Controller
                 }
             }
         }else if($iataReference == '86511574'){
-            $arrayOptionKey = ['DEMTY','MTYFE'];
+            $arrayOptionKey = ['DEMTY','MTYFE','IMON','DIMO'];
             
             foreach ($arrayOptionKey as $key => $value) {
                 $arrayOptionKeyFound = searchThroughArray($value, $dataArrayPrevio);
@@ -1116,7 +1116,7 @@ class ConciliationController extends Controller
                 }
             }
         }else if($iataReference == '86515973'){
-            $arrayOptionKey = ['DESAN','SANFE'];
+            $arrayOptionKey = ['DESAN','SANFE','DISA','ISAN'];
             
             foreach ($arrayOptionKey as $key => $value) {
                 $arrayOptionKeyFound = searchThroughArray($value, $dataArrayPrevio);
