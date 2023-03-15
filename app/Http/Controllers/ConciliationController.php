@@ -1086,7 +1086,7 @@ class ConciliationController extends Controller
         $keyOption  = '';
 
         if ($iataReference == '86515984') {
-            $arrayOptionKey = ['DEMEX','DMX','MEXFE','MXF'];
+            $arrayOptionKey = ['DEMEX','DMX','MEXFE','MXF','DIME','DIX'];
             
             foreach ($arrayOptionKey as $key => $value) {
                 $arrayOptionKeyFound = searchThroughArray($value, $dataArrayPrevio);
@@ -1096,7 +1096,7 @@ class ConciliationController extends Controller
                 }
             }
         }else if($iataReference == '86502194'){
-            $arrayOptionKey = ['DEGDL','GDLFE'];
+            $arrayOptionKey = ['DEGDL','GDLFE','DIJA'];
             
             foreach ($arrayOptionKey as $key => $value) {
                 $arrayOptionKeyFound = searchThroughArray($value, $dataArrayPrevio);
