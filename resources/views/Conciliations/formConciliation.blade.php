@@ -46,7 +46,7 @@
             </div>
                 <div id="spinner-loader" style="display: none;">
                     <div style="text-align: center">
-                    <img alt="loader" src="{{ asset('assets') }}/img/theme/loader.gif"  >
+                    <img alt="loader" src="{{ asset('assets') }}/img/theme/airplane.gif" style="height: 400px; width: 750px;">
                     </div>
                     <div style="text-align: center">
                     Procesando documentos, por favor espere...
