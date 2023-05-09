@@ -1106,7 +1106,7 @@ class ConciliationController extends Controller
                 }
             }
         }else if($iataReference == '86511574'){
-            $arrayOptionKey = ['DEMTY','MTYFE','IMON','DIMO'];
+            $arrayOptionKey = ['DEMTY','MTYFE','IMON','DIMO','DIM'];
             
             foreach ($arrayOptionKey as $key => $value) {
                 $arrayOptionKeyFound = searchThroughArray($value, $dataArrayPrevio);
